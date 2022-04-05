@@ -48,7 +48,7 @@ const Login = () => {
 
     //Handle form submission
     const handleFormData = () =>{
-        setToken("json")
+        //setToken("json")
         if(validation()){
             fetch('https://fakestoreapi.com/auth/login',{
             method:'POST',

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 const ProductDetails = (props) => {
     const [numOfItem , setNumOfItem] = useState(1);
     const history = useHistory();
-    
+
     return <>
         <Header/>
         <div className='container-fluid'>

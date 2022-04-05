@@ -11,7 +11,7 @@ const Header = () => {
             <a className="navbar-brand text-decoration-none" href="/"><span className='text-secondary'>Wood</span><span className='text-light'>LAND</span></a>
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item ">
-                    <a className="nav-link text-light" href="#">Log Out</a>
+                    <a className="nav-link text-light" href="#" onClick={e=> {localStorage.clear(); history.push('/')}}>Log Out</a>
                 </li>
                 <li className="nav-item ">
                     <Link className="nav-link text-light" to="/cart">My cart</Link>
