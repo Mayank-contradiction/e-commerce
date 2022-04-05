@@ -1,0 +1,53 @@
+.page{
+  width: 100%;
+  height: 100vh;
+  background-image: url(./image/shopping.jpg);
+  background-position: center; 
+  background-size: cover;
+}
+
+.card-main {
+  background: #ffffffd0;
+  border-radius: 30px;
+  width: 60%;
+}
+
+.invalid, .invalid:focus{
+  border-color: red !important;
+  box-shadow: none !important;
+}
+
+.product-card{
+  width: 275px;
+  height: 450px;
+}
+
+.product-card img {
+  width: 255px;
+  height: 55%;
+}
+
+.text-truncate.text-truncate--3{
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+div.rating > span {
+  color: #3a97e9e0 !important;
+}
+
+.search-bar{
+  max-width: 800px;
+}
+
+.image{
+  width: 70%;
+  height: 450px;
+}
+
+.card-horizontal {
+  display: flex;
+  flex: 1 1 auto;
+}
