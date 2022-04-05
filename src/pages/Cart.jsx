@@ -9,9 +9,7 @@ const Cart = () => {
     const { productsLoading, products, productsError} = useSelector(state=> state.productsList);
     const { cartLoading, cartList, cartError} = useSelector(state=> state.cartListStore);
     useEffect(()=>{
-        if(products.length === 0){
-            dispatch(getAllProducts());
-        }
+        dispatch(getAllProducts());
         dispatch(getCarts());
     },[]);
 
@@ -27,7 +25,6 @@ const Cart = () => {
     },[cartLoading]);
 
     const addMinus = (cartIndex, productIndex, addOrMinus) =>{
-   
         if(addOrMinus){
             setQuantity((current)=>{
                 let temp = [...current];

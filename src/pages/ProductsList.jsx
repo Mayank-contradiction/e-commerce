@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllProducts, getCategoryList } from '../actions/productActions';
-import Rating from 'react-rating';
+import { getAllProducts, getCategoryList, getProductsByCate } from '../actions/productActions';
 import Header from '../components/Header';
-import { useHistory } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
+import ProductComponent from '../components/ProductComponent';
 
 const PER_PAGE = 8;
 
@@ -14,37 +13,50 @@ const ProductsList = () => {
     const [searchString, setSearchString] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedSort, setSelectedSort] = useState('asc');
-    const history = useHistory();
+    const ALL_PRODUCTS =  useRef([]);
+
     const dispatch = useDispatch();
-    const { productsLoading, products, productsError} = useSelector(state=> state.productsList);
-    const { categoriesLoading, categories, categoriesError} = useSelector(state=> state.categories);
+
+    const { productsLoading, products } = useSelector(state=> state.productsList);
+    const { categoriesLoading, categories } = useSelector(state=> state.categories);
+
     useEffect(()=>{
-        dispatch(getAllProducts());
-        dispatch(getCategoryList());
+        if(products.length === 0){
+            dispatch(getAllProducts());
+        }
+        if(categories.length === 0){
+            dispatch(getCategoryList());
+        }
     },[]);
 
     useEffect(()=>{
         if(productsLoading === false && products.length > 0){
             setProductList(products);
+            if(selectedCategory === 'all'){
+                ALL_PRODUCTS.current = products;
+            }
         }
-    },[productsLoading]);
+    },[productsLoading, products]);
 
     useEffect(()=>{
-        if(productsLoading === false && products.length > 0 && (!searchString)){
-            setProductList(products);
+        setSelectedSort('asc')
+        if(selectedCategory !== 'all'){
+            dispatch(getProductsByCate(selectedCategory));
+        }else{
+            dispatch(getAllProducts());
         }
-    },[selectedCategory, searchString]);
+    },[selectedCategory]);
 
     useEffect(()=>{
         if(productList){
-            if(selectedSort === 'asc' && productList[0].id !== 1){
+            if(selectedSort === 'asc' && productList[0].id > productList[productList.length-1].id){
                 setProductList(()=>{
                     let temp = [...productList];
                     temp.reverse();
                     return temp;
                 })
             }
-            if(selectedSort === 'desc' && productList[0].id === 1){
+            if(selectedSort === 'desc' && productList[0].id < productList[productList.length-1].id){
                 setProductList((current)=>{
                     let temp = [...current];
                     temp.reverse();
@@ -56,7 +68,7 @@ const ProductsList = () => {
 
     const filteredProducts = () => {
         let query = searchString.toLowerCase(); 
-        let result = products.filter((elem) => {
+        let result = ALL_PRODUCTS.filter((elem) => {
             if (
             elem.title.toLowerCase().includes(query) ||
             elem.category.toLowerCase().includes(query)
@@ -73,7 +85,7 @@ const ProductsList = () => {
             <div className="input-group mb-3 search-bar mx-auto">
                 <input type="text" className="form-control" placeholder="Search" value={searchString} onChange={e => setSearchString(e.target.value)}/>
                 <div className="input-group-append">
-                    <button className="btn btn-danger" type="button" onClick={e=> {setSearchString(''); setSelectedSort('asc'); setProductList(products)}}><i className="fa-solid fa-xmark"></i></button>
+                    <button className="btn btn-danger" type="button" onClick={e=> {setSearchString(''); setSelectedSort('asc'); setProductList(ALL_PRODUCTS); setSelectedCategory('all')}}><i className="fa-solid fa-xmark"></i></button>
                 </div>
                 <div className="input-group-append">
                     <button className="btn btn-primary" type="button" onClick={e=> filteredProducts()}>Search</button>
@@ -84,7 +96,7 @@ const ProductsList = () => {
                     <label htmlFor="category">Category: </label>
                     <select className='ml-1' id="category" name="category" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
                         <option value="all">All products</option>
-                        {categoriesLoading == false && categories && categories.map((elem)=>{
+                        {categoriesLoading === false && categories && categories.map((elem)=>{
                             return <option value={elem} key={elem}>{elem.charAt(0).toUpperCase() + elem.slice(1)}</option>
                             })
                         }
@@ -101,27 +113,7 @@ const ProductsList = () => {
             { productsLoading === false && productList ? 
                 <>
                     <div className="d-flex flex-wrap justify-content-center">
-                        { productList.slice(currentPage * PER_PAGE, currentPage * PER_PAGE + PER_PAGE).map((elem)=> selectedCategory === 'all' || elem.category === selectedCategory ?
-                            <div className="card product-card m-3 p-1" key={elem.id} onClick={e=> history.push({
-                                    pathname: '/product-details',
-                                    state: { data: elem }
-                                })}>
-                                <img className="card-img-top" src={elem.image} alt="Card image"/>
-                                <div className="card-body position-relative">
-                                    <h5 className="card-title text-truncate text-truncate--3">{elem.title}</h5>
-                                    <div className='position-absolute' style={{bottom: 10 + 'px'}}>
-                                        <div className='rating'>
-                                            <Rating
-                                                emptySymbol="fa fa-star-o fa-2x"
-                                                fullSymbol="fa fa-star fa-2x"
-                                                initialRating={elem.rating.rate}
-                                                readonly
-                                            />
-                                        </div>
-                                        <div className=' mt-3'><h5 className='text-primary'>&#8377; {elem.price}</h5></div>
-                                    </div>
-                                </div>
-                            </div> : null
+                        { productList.slice(currentPage * PER_PAGE, currentPage * PER_PAGE + PER_PAGE).map((elem)=> <ProductComponent product={elem} key={elem.id}/> 
                         )} 
                     </div>
                     <div className='d-flex justify-content-center'> 
