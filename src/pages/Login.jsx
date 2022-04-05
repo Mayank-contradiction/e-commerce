@@ -50,17 +50,19 @@ const Login = () => {
     const handleFormData = () =>{
         //setToken("json")
         if(validation()){
-            fetch('https://fakestoreapi.com/auth/login',{
-            method:'POST',
-            mode: 'no-cors', 
-            body:JSON.stringify({
-                username: "johnd",
-                password: "m38rmF$"
-            })
-        })
-            .then(res=>res.json())
-            .then(json=>setToken(json))
-            .catch(error=>console.error(error))
+            setToken('MAY!@AN!!K@)))');
+            history.push('/products')
+        //     fetch('https://fakestoreapi.com/auth/login',{
+        //     method:'POST',
+        //     mode: 'no-cors', 
+        //     body:JSON.stringify({
+        //         username: "johnd",
+        //         password: "m38rmF$"
+        //     })
+        // })
+        //     .then(res=>res.json())
+        //     .then(json=>setToken(json))
+        //     .catch(error=>console.error(error))
         }
     }
 
